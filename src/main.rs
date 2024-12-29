@@ -1,4 +1,4 @@
-use std::{env, fs, path::{Path, PathBuf}, process::exit, str::FromStr};
+use std::{env, fs, path::Path, process::exit, str::FromStr};
 
 use clap::Parser;
 
@@ -49,7 +49,8 @@ fn copy_folder_dir(src: impl AsRef<Path>, dest: impl AsRef<Path>, overwrite: boo
                     copy_folder_dir(entry.path(), dest.as_ref().join(entry.file_name()), overwrite);
                 } else {
                     let new_file_path = dest.as_ref().join(entry.file_name());
-                    if !fs::exists(&dest).expect(&format!("Failed to check if '{}' exists", dest.as_ref().to_str().unwrap())) || overwrite {
+
+                    if !(fs::exists(&new_file_path).expect(&format!("Failed to check if '{}' exists", dest.as_ref().to_str().unwrap()))) || overwrite {
                         
                         match fs::copy(entry.path(), &new_file_path) {
                             Ok(_) => { println!("Copied '{}' to '{}'", entry.path().to_str().unwrap(), &new_file_path.to_str().unwrap()) },
@@ -64,10 +65,10 @@ fn copy_folder_dir(src: impl AsRef<Path>, dest: impl AsRef<Path>, overwrite: boo
     }
 }
 
-fn env_setup_rust(data: &Data){
-    println!("Setting up rust at '{}'", data.args.directory);
+fn env_setup_generic(data: &Data, env: &str){
+    println!("Setting up {} at '{}'", env, data.args.directory);
 
-    copy_folder_dir(&format!("{}/rust", data.env_dir.as_ref().unwrap()), &data.args.directory, false);
+    copy_folder_dir(&format!("{}/{}", data.env_dir.as_ref().unwrap(), env), &data.args.directory, false);
 }
 
 fn convert_string_to_path(path: impl AsRef<Path>) -> impl AsRef<Path> {
@@ -101,8 +102,12 @@ fn main() {
 
     match data.args.language.as_str() {
         "rust" => {
-            env_setup_rust(&data);
+            env_setup_generic(&data, "rust");
         },
+
+        "python" => {
+            env_setup_generic(&data, "python");
+        }
         
         _ => {
             eprintln!("Error: Language '{}' is not supported", data.args.language);
