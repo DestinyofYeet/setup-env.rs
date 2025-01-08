@@ -5,15 +5,15 @@
 }:
 
 rustPlatform.buildRustPackage {
-  pname = "waybar-taskwarrior";
+  pname = "pkg";
   version = "1.0";
 
   src = ./.;
 
-  cargoHash = "sha256-EvXD9aLFyY/M7y2W0uTpkJlQIZuNg1YpB+SaHYlwpyE=";
+  cargoHash = "";
 
   meta = with lib; {
-    description = "A program to export taskwarrior to waybar";
+    description = "A program";
     license = licenses.gpl2;
     platforms = platforms.all;
   };
