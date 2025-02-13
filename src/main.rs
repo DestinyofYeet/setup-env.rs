@@ -1,9 +1,9 @@
-use std::{env, fs, path::Path, process::exit, str::FromStr};
+use std::{env, fs::{self, Permissions}, os::unix::fs::PermissionsExt, path::Path, process::exit, str::FromStr};
 
 use clap::Parser;
 
 #[derive(Parser, Debug)]
-#[command(version = "1.0", about = "A tool to generate a working environment", long_about = None)]
+#[command(version = "1.0", about = "A tool to generate a working environment in NixOS", long_about = None)]
 struct Args {
     #[arg(
         short = 'u',
@@ -14,10 +14,9 @@ struct Args {
     update: bool,
 
     #[arg(
-        short = 'l',
-        long = "lang",
         required = true,
-        help = "The language to setup"
+        help = "The language to setup",
+        index = 1,
     )]
     language: String,
 
@@ -46,7 +45,10 @@ fn copy_folder_dir(src: impl AsRef<Path>, dest: impl AsRef<Path>, overwrite: boo
         dest.as_ref().to_str().unwrap()
     )) {
         match fs::create_dir(&dest) {
-            Ok(_) => {}
+            Ok(_) => {
+                // TODO: set permissions for subfolders too
+                // folder.metadata().unwrap().permissions().set_mode(0o754)
+            }
             Err(_) => panic!(
                 "Could not create dst folder '{}'",
                 dest.as_ref().to_str().unwrap()
@@ -86,7 +88,21 @@ fn copy_folder_dir(src: impl AsRef<Path>, dest: impl AsRef<Path>, overwrite: boo
                                     "Copied '{}' to '{}'",
                                     entry.path().to_str().unwrap(),
                                     &new_file_path.to_str().unwrap()
-                                )
+                                );
+
+                                match fs::metadata(&new_file_path.to_str().unwrap()) {
+                                    Err(e) => { eprintln!("Failed to get metadata for file '{}' because: {}", &new_file_path.to_str().unwrap(), e)},
+                                    Ok(metadata) => {
+                                        let mut permissions = metadata.permissions();
+                                        permissions.set_mode(0o644);
+                                        match fs::set_permissions(&new_file_path, permissions) {
+                                            Err(e) => {
+                                                eprintln!("Failed to make file '{}' writeable because: {}", &new_file_path.to_str().unwrap(), e)
+                                            }
+                                            Ok(_) => {}
+                                        }
+                                    }
+                                }
                             }
                             Err(e) => eprintln!(
                                 "Failed to copy file {} {}",
