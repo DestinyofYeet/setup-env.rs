@@ -1,8 +1,4 @@
-{
-  rustPlatform,
-  lib,
-  ...
-}:
+{ rustPlatform, lib, ... }:
 
 rustPlatform.buildRustPackage {
   pname = "setup-env";
