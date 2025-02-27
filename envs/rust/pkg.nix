@@ -1,8 +1,4 @@
-{
-  rustPlatform,
-  lib,
-  ...
-}:
+{ rustPlatform, lib, ... }:
 
 rustPlatform.buildRustPackage {
   pname = "pkg";
@@ -11,6 +7,8 @@ rustPlatform.buildRustPackage {
   src = ./.;
 
   cargoHash = "";
+
+  useFetchCargoVendor = true;
 
   meta = with lib; {
     description = "A program";

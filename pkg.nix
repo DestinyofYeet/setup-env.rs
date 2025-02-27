@@ -6,7 +6,9 @@ rustPlatform.buildRustPackage {
 
   src = ./.;
 
-  cargoHash = "sha256-hIlmrnfvunvvBJF7DAajSH4lKED9GouVlH+f2nOAbeM=";
+  cargoHash = "sha256-/IC80bC+9cTTDbLCguqReB9rZETeJZwnCRa9DyTR/yQ=";
+
+  useFetchCargoVendor = true;
 
   installPhase = ''
     runHook preInstall
