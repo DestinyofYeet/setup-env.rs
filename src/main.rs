@@ -184,6 +184,10 @@ fn main() {
             env_setup_generic(&data, "d2");
         }
 
+        "hugo" => {
+            env_setup_generic(&data, "hugo");
+        }
+
         _ => {
             eprintln!("Error: Language '{}' is not supported", data.args.language);
             exit(1)
