@@ -8,8 +8,6 @@ rustPlatform.buildRustPackage {
 
   cargoHash = "sha256-/IC80bC+9cTTDbLCguqReB9rZETeJZwnCRa9DyTR/yQ=";
 
-  useFetchCargoVendor = true;
-
   installPhase = ''
     runHook preInstall
     mkdir -p $out/envs
