@@ -8,8 +8,6 @@ rustPlatform.buildRustPackage {
 
   cargoHash = "";
 
-  useFetchCargoVendor = true;
-
   meta = with lib; {
     description = "A program";
     license = licenses.gpl2;
